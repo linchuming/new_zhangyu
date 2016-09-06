@@ -29,6 +29,8 @@
     <div class="row">
         <div class="col-sm-12 col-md-12 main">
             <h1 class="sub-header">报名简历查看</h1>
+            <p id="total"></p>
+            <button type="button" class="btn btn-default" id="unique">智能去重</button>
             <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>
@@ -60,12 +62,16 @@
 </body>
 <script>
 
-    $(document).ready(function() {
+    function query(unique)
+    {
         $.ajax({
             type: 'post',
             url: 'queryjoinlist',
-            data: {},
+            data: {
+                unique: unique
+            },
             success: function(res) {
+                $('#data').html('')
                 $.each(res.data, function(key, val) {
                     var email = val.Fstu_id + "@fudan.edu.cn"
                     var url = "joinlook?stuId=" + val.Fstu_id + "&check=" + val.Fcheck
@@ -89,8 +95,17 @@
                             "</td></tr>"
                     //console.log(tableRow)
                     $('#data').append(tableRow)
+                    $('#total').html('共' + res.total + '行')
                 })
             }
+        })
+    }
+
+    $(document).ready(function() {
+        query(0)
+
+        $('#unique').click(function() {
+            query(1)
         })
     })
 </script>

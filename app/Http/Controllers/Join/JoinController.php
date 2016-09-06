@@ -12,6 +12,7 @@ use App\Models\Join;
 use App\Service\JoinService;
 use Request;
 use Mail;
+use Session;
 class JoinController extends Controller {
     public function index()
     {
@@ -44,8 +45,15 @@ class JoinController extends Controller {
             'name' => 'required',
             'phone' => 'required',
         ]);
-        $join = new JoinService();
-        $check = $join->addJoin($input);
+
+        if(Session::has('stuId') && Session::get('stuId') == $input['stu_id']) {
+            $check = Session::get('check');
+        } else {
+            $join = new JoinService();
+            $check = $join->addJoin($input);
+            Session::put('stuId', $input['stu_id']);
+            Session::put('check', $check);
+        }
         return [
             'stuId' => $input['stu_id'],
             'check' => $check,
@@ -60,8 +68,15 @@ class JoinController extends Controller {
             'name' => 'required',
             'phone' => 'required',
         ]);
-        $join = new JoinService();
-        $check = $join->addJoin2($input);
+
+        if(Session::has('stuId') && Session::get('stuId') == $input['stu_id']) {
+            $check = Session::get('check');
+        } else {
+            $join = new JoinService();
+            $check = $join->addJoin2($input);
+            Session::put('stuId', $input['stu_id']);
+            Session::put('check', $check);
+        }
         return [
             'stuId' => $input['stu_id'],
             'check' => $check,

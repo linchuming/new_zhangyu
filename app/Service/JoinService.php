@@ -48,8 +48,8 @@ class JoinService
             'Fphone' => $input['phone'],
             'Fcheck' => $check,
         ];
-        $join->insert($ins);
-        $this->sendJoinMail($input['stu_id'], $input['name'], $check);
+        //$join->insert($ins);
+        //$this->sendJoinMail($input['stu_id'], $input['name'], $check);
         try {
 //            $join->insert($ins);
 //            $this->sendJoinMail($input['stu_id'], $input['name'], $check);
@@ -139,7 +139,22 @@ class JoinService
         ];
         $sql = $join->select($keys);
         $res = $sql->get()->toArray();
-        $count = $sql->count();
+        if(isset($input['unique']) && $input['unique'] == 1) {
+            //智能去重
+            $count = 0;
+            $data = [];
+            foreach ($res as $row) {
+                if(isset($data[$row['Fstu_id']]) && !empty($row['Fmajor'])) {
+                    $data[$row['Fstu_id']] = $row;
+                } else if(!isset($data[$row['Fstu_id']])) {
+                    $data[$row['Fstu_id']] = $row;
+                    $count++;
+                }
+            }
+            $res = $data;
+        } else {
+            $count = $sql->count();
+        }
         $result['data'] = $res;
         $result['total'] = $count;
         return $result;
